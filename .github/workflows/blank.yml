@@ -1,0 +1,70 @@
+name: 'Smurf Workflow'
+description: 'A streamlined workflow management with Smurf.'
+
+inputs:
+  command:
+    description: 'Command to run (init, plan, apply, drift, or provision)'
+    required: true
+  terraform_dir:
+    description: 'Directory containing Terraform configuration files'
+    required: true
+  DOCKER_IMAGE:
+    description: 'Docker image name for Smurf'
+    required: true
+  DOCKER_TAG:
+    description: 'Docker image tag'
+    required: true
+  DOCKER_CLEANUP:
+    description: 'Cleanup after build (true or false)'
+    required: false
+    default: 'false'
+  DOCKER_USERNAME:
+    description: 'Docker Hub username'
+    required: false
+  DOCKER_PASSWORD:
+    description: 'Docker Hub password'
+    required: false
+  TOKEN:
+    description: 'GitHub Token for repo access'
+    required: false
+  GITHUB_USERNAME:
+    description: 'GitHub Username'
+    required: false
+  DOCKERFILE_PATH:
+    description: 'Path to the Dockerfile'
+    required: false
+    default: './Dockerfile'
+  DOCKER_BUILD_ARCHITECTURE:
+    description: 'Build Architecture for Docker'
+    required: false
+    default: 'amd64'
+  DOCKER_BUILD_ARGS:
+    description: 'Additional Docker build arguments'
+    required: false
+  DOCKER_NO_CACHE:
+    description: 'Disable Docker cache (true or false)'
+    required: false
+    default: 'false'
+  DOCKER_MULTI_ARCH_BUILD:
+    description: 'Enable multi-architecture Docker image build (true or false)'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'docker'
+  image: 'docker.io/cutiee/smurf-image'
+  env:
+    DOCKER_IMAGE: ${{ inputs.DOCKER_IMAGE }}
+    DOCKER_TAG: ${{ inputs.DOCKER_TAG }}
+    DOCKER_CLEANUP: ${{ inputs.DOCKER_CLEANUP }}
+    DOCKER_USERNAME: ${{ inputs.DOCKER_USERNAME }}
+    DOCKER_PASSWORD: ${{ inputs.DOCKER_PASSWORD }}
+    TOKEN: ${{ inputs.TOKEN }}
+    GITHUB_USERNAME: ${{ inputs.GITHUB_USERNAME }}
+    DOCKERFILE_PATH: ${{ inputs.DOCKERFILE_PATH }}
+    DOCKER_BUILD_ARCHITECTURE: ${{ inputs.DOCKER_BUILD_ARCHITECTURE }}
+    DOCKER_BUILD_ARGS: ${{ inputs.DOCKER_BUILD_ARGS }}
+    DOCKER_NO_CACHE: ${{ inputs.DOCKER_NO_CACHE }}
+  args:
+    - '--directory=${{ inputs.terraform_dir }}'
+    - ${{ inputs.command }}
